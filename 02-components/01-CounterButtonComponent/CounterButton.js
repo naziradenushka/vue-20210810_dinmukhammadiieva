@@ -7,32 +7,37 @@ export default defineComponent({
       default: 0,
     },
   },
-  // props: ['count'],
   emits: ['update:count'],
-  data() {
-    return {
-      counter: this.count,
-    };
-  },
-  computed: {
-    value: {
-      get() {
-        return this.count;
-      },
-      set(value) {
-        this.$emit('update:count', value);
-      },
-    },
-  },
-  watch: {
-    value(newValue, oldValue) {
-      this.counter = oldValue + 1;
-    }
-  },
+  // data() {
+  //   return {
+  //     counter: this.count,
+  //   };
+  // },
+  // computed: {
+  //   value: {
+  //     get() {
+  //       return this.count;
+  //     },
+  //     set(value) {
+  //       this.$emit('update:count', value);
+  //     },
+  //   },
+  // },
+  // watch: {
+  //   value(newValue, oldValue) {
+  //     this.counter = oldValue + 1;
+  //   },
+  // },
+  // methods: {
+  //   setCounter() {
+  //     return ++this.counter;
+  //   },
+  // },
   // Компонент должен иметь входной параметр
 
   // Шаблон лучше держать максимально простым, а логику выносить в методы
 
   // Шаблон потребуется отредактировать
-  template: `<button @click="value=++counter" type="button">{{ value }}</button>`,
+  // template: `<button @click="value=setCounter" type="button">{{ count }}</button>`,
+  template: `<button @click="$emit('update:count', count + 1)" type="button">{{ count }}</button>`,
 });

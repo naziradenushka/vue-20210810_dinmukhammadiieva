@@ -40,19 +40,32 @@ const vm = createApp({
   computed: {
     filteredEmails() {
       let result = [];
-      for (let i = 0; i < this.emails.length; i++) {
-        if (this.emails[i].toLowerCase().includes(this.searchValue) && this.searchValue != '') {
+      this.emails.map((email) => {
+        if (email.toLowerCase().includes(this.searchValue.toLowerCase()) && this.searchValue != '') {
           result.push({
-            email: this.emails[i],
+            email: email,
             marked: true,
           });
         } else {
           result.push({
-            email: this.emails[i],
+            email: email,
             marked: false,
           });
         }
-      }
+      });
+      // for (let i = 0; i < this.emails.length; i++) {
+      //   if (this.emails[i].toLowerCase().includes(this.searchValue) && this.searchValue != '') {
+      //     result.push({
+      //       email: this.emails[i],
+      //       marked: true,
+      //     });
+      //   } else {
+      //     result.push({
+      //       email: this.emails[i],
+      //       marked: false,
+      //     });
+      //   }
+      // }
       return result;
     },
   },
