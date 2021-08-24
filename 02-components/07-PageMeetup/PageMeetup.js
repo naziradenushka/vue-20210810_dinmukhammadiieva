@@ -6,7 +6,7 @@ import MeetupView from '../06-MeetupView/MeetupView.js';
 
 export default defineComponent({
   name: 'PageMeetup',
-  fetchMeetupById,
+
   components: {
     UiAlert,
     UiContainer,
@@ -35,8 +35,7 @@ export default defineComponent({
   methods: {
     meetupById() {
       this.meetup = null;
-      this.$options
-        .fetchMeetupById(this.meetupId)
+      fetchMeetupById(this.meetupId)
         .then((meetup) => {
           this.error = false;
           this.meetup = meetup;
