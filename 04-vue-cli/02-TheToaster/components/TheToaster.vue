@@ -1,7 +1,7 @@
 <template>
   <div class="toasts">
     <template v-for="(toast, index) in toasts" :key="index">
-      <div v-if="toast.show" class="toast" :class="toast.class">
+      <div class="toast" :class="toast.class">
         <ui-icon class="toast__icon" :icon="toast.icon" />
         <span>{{ toast.msg }}</span>
       </div>
@@ -35,25 +35,21 @@ export default {
     },
     success(message) {
       this.toasts.push({
-        show: true,
         class: 'toast_success',
         msg: message,
         icon: 'check-circle',
       });
       setTimeout(() => {
-        // console.log('s', id);
         this.cancel();
       }, 5000);
     },
     error(message) {
       this.toasts.push({
-        show: true,
         class: 'toast_error',
         msg: message,
         icon: 'alert-circle',
       });
       setTimeout(() => {
-        // console.log('e', id);
         this.cancel();
       }, 5000);
     },
