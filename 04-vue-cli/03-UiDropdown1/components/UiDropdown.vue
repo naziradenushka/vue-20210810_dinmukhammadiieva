@@ -1,18 +1,33 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ dropdown_opened: showMenu }" @click="showMenu = !showMenu">
+    <select hidden @change="$emit('update:modelValue', $event.target.value)">
+      <option
+        v-for="option in options"
+        :key="option.value"
+        :value="option.value"
+        :selected="option.value == modelValue"
+      >
+        {{ option.text }}
+      </option>
+    </select>
+    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: isIcon() }">
+      <ui-icon v-if="selectOption && selectOption[0].icon" :icon="selectOption[0].icon" class="dropdown__icon" />
+      <span>{{ selectOption ? selectOption[0].text : title }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="showMenu" class="dropdown__menu" role="listbox">
+      <button
+        v-for="option in options"
+        :key="option.value"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: isIcon() }"
+        role="option"
+        type="button"
+        :data-value="option.value"
+        @click="$emit('update:modelValue', $event.target.dataset.value)"
+      >
+        <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
+        {{ option.text }}
       </button>
     </div>
   </div>
@@ -25,6 +40,44 @@ export default {
   name: 'UiDropdown',
 
   components: { UiIcon },
+  props: {
+    title: {
+      type: String,
+      required: true,
+    },
+    options: {
+      type: Object,
+      required: true,
+    },
+    modelValue: {
+      required: true,
+    },
+  },
+  emits: ['update:modelValue'],
+  data() {
+    return {
+      showMenu: false,
+    };
+  },
+  computed: {
+    selectOption() {
+      if (this.modelValue) {
+        return this.options.filter((el) => {
+          if (this.modelValue == el.value) return el;
+        });
+      }
+      return false;
+    },
+  },
+  methods: {
+    isIcon() {
+      let is_icon = this.options.filter((el) => {
+        if (el.icon) return true;
+      });
+      if (is_icon.length != 0) return true;
+      else return false;
+    },
+  },
 };
 </script>
 
