@@ -1,11 +1,9 @@
 <template>
   <div class="toasts">
-    <template v-for="(toast, index) in toasts" :key="index">
-      <div class="toast" :class="toast.class">
-        <ui-icon class="toast__icon" :icon="toast.icon" />
-        <span>{{ toast.msg }}</span>
-      </div>
-    </template>
+    <div v-for="(toast, index) in toasts" :key="index" class="toast" :class="toast.class">
+      <ui-icon class="toast__icon" :icon="toast.icon" />
+      <span>{{ toast.msg }}</span>
+    </div>
     <!-- <div lass="toast toast_success">
       <ui-icon class="toast__icon" icon="check-circle" />
       <span>Success Toast Example</span>
