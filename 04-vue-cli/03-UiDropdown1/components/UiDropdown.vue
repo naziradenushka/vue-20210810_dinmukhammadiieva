@@ -23,8 +23,7 @@
         :class="{ dropdown__item_icon: isIcon() }"
         role="option"
         type="button"
-        :data-value="option.value"
-        @click="$emit('update:modelValue', $event.target.dataset.value)"
+        @click="$emit('update:modelValue', option.value)"
       >
         <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
         {{ option.text }}
@@ -71,11 +70,7 @@ export default {
   },
   methods: {
     isIcon() {
-      let is_icon = this.options.filter((el) => {
-        if (el.icon) return true;
-      });
-      if (is_icon.length != 0) return true;
-      else return false;
+      return this.options.some((el) => el.icon);
     },
   },
 };

@@ -16,7 +16,9 @@
         <div class="form__buttons">
           <button type="submit" class="button button_primary button_block">Войти</button>
         </div>
-        <div class="form__append">Нет аккаунта? <a href="/register" class="link">Зарегистрируйтесь</a></div>
+        <div class="form__append">
+          Нет аккаунта? <router-link :to="{ name: 'register' }" class="link">Зарегистрируйтесь</router-link>
+        </div>
       </form>
     </ui-container>
   </div>
@@ -35,8 +37,9 @@ export default {
   },
 
   methods: {
-    handleSubmit() {
-      // Требуется обработать сабмит формы
+    handleSubmit(e) {
+      if (!!this.$route.query.from == true) this.$router.push({ path: this.$route.query.from });
+      else this.$router.push({ name: 'home' });
     },
   },
 };

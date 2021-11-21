@@ -12,5 +12,14 @@ export const router = createRouter({
       path: '/page-b',
       component: () => import('../views/PageB'),
     },
+    {
+      path: '/404',
+      name: 'PageNotFound',
+      component: () => import('../views/PageNotFound'),
+    },
+    {
+      path: '/:pathMatch(.*)',
+      redirect: '/404',
+    },
   ],
 });
