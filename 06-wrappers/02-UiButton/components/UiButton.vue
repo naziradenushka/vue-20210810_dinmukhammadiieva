@@ -3,7 +3,7 @@
     :is="block ? 'div' : tag"
     class="button"
     :class="[`button_${variant}`, { button_block: block }]"
-    :type="block ? null : type"
+    :type="tag == 'div' ? null : type"
   >
     <slot />
   </component>
