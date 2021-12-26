@@ -12,6 +12,17 @@
 
     <component
       :is="multiline ? 'textarea' : 'input'"
+      v-if="modelModifiers.lazy"
+      ref="input"
+      class="form-control"
+      :class="{ 'form-control_sm': small, 'form-control_rounded': rounded }"
+      v-bind="$attrs"
+      :value="modelValue"
+      @change="$emit('update:modelValue', $event.target.value)"
+    />
+    <component
+      :is="multiline ? 'textarea' : 'input'"
+      v-else
       ref="input"
       class="form-control"
       :class="{ 'form-control_sm': small, 'form-control_rounded': rounded }"
@@ -42,6 +53,9 @@ export default {
     },
     rounded: {
       type: Boolean,
+    },
+    modelModifiers: {
+      default: () => ({}),
     },
   },
   emits: ['update:modelValue'],
