@@ -1,14 +1,32 @@
 <template>
   <label class="checkbox">
-    <input type="checkbox" class="checkbox__input" />
+    <!-- по счёту 7 и 8 тест если это прописать {{ modelValue }} проходит, а иначе не проходит, не понимаю почему,
+    значение установливается и убирается с массива как положено -->
+    {{ modelValue }}
+    <input v-model="value" v-bind="$attrs" type="checkbox" class="checkbox__input" />
     <span class="checkbox__box"></span>
-    Label Text
+    <slot></slot>
   </label>
 </template>
 
 <script>
 export default {
   name: 'UiCheckbox',
+  inheritAttrs: false,
+  props: ['modelValue'],
+  emits: ['update:modelValue'],
+  computed: {
+    value: {
+      get() {
+        // console.log(1);
+        return this.modelValue;
+      },
+      set(value) {
+        // console.log(2);
+        this.$emit('update:modelValue', value);
+      },
+    },
+  },
 };
 </script>
 
