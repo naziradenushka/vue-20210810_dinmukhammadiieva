@@ -12,23 +12,12 @@
 
     <component
       :is="multiline ? 'textarea' : 'input'"
-      v-if="modelModifiers.lazy"
       ref="input"
       class="form-control"
       :class="{ 'form-control_sm': small, 'form-control_rounded': rounded }"
       v-bind="$attrs"
       :value="modelValue"
-      @change="$emit('update:modelValue', $event.target.value)"
-    />
-    <component
-      :is="multiline ? 'textarea' : 'input'"
-      v-else
-      ref="input"
-      class="form-control"
-      :class="{ 'form-control_sm': small, 'form-control_rounded': rounded }"
-      v-bind="$attrs"
-      :value="modelValue"
-      @input="$emit('update:modelValue', $event.target.value)"
+      @[isModelModifiersLazy]="$emit('update:modelValue', $event.target.value)"
     />
 
     <div v-if="$slots['right-icon']" class="input-group__icon">
@@ -59,6 +48,11 @@ export default {
     },
   },
   emits: ['update:modelValue'],
+  computed: {
+    isModelModifiersLazy() {
+      return this.modelModifiers.lazy ? 'change' : 'input';
+    },
+  },
   methods: {
     focus() {
       this.$refs.input.focus();
