@@ -2,54 +2,120 @@
   <div class="image-uploader">
     <label
       class="image-uploader__preview"
-      :style="`--bg-url: url(${preview})`"
-      :class="{ 'image-uploader__preview-loading': isUpload }"
-      @click="removeFile($event)"
+      :class="{ 'image-uploader__preview-loading': state === $options.States.LOADING }"
+      :style="previewSrc && `--bg-url: url('${previewSrc}')`"
     >
-      <span v-if="!!!preview && !isUpload" class="image-uploader__text">Загрузить изображение</span>
-      <span v-else-if="isUpload" class="image-uploader__text">Загрузка...</span>
-      <span v-else class="image-uploader__text">Удалить изображение</span>
+      <span class="image-uploader__text">{{ stateText }}</span>
       <input
-        v-bind="$attrs"
-        ref="fileupload"
+        ref="input"
         type="file"
         accept="image/*"
         class="image-uploader__input"
-        @change="select"
+        v-bind="$attrs"
+        @change="handleFileSelect"
+        @click="handleClick"
       />
     </label>
   </div>
 </template>
 
 <script>
+const States = {
+  EMPTY: 'empty',
+  LOADING: 'loading',
+  FILLED: 'filled',
+};
+
 export default {
   name: 'UiImageUploader',
   inheritAttrs: false,
-  props: ['preview', 'uploader'],
-  emits: ['upload', 'remove'],
+
+  States,
+
+  props: {
+    uploader: {
+      type: Function,
+    },
+
+    preview: {
+      type: String,
+    },
+  },
+
+  emits: ['upload', 'select', 'error', 'remove'],
+
   data() {
     return {
-      isUpload: false,
+      // Храним текущее состояние
+      // Начальное состояние зависит от того, передан ли preview
+      state: this.preview ? States.FILLED : States.EMPTY,
+      selectedImage: null,
     };
   },
-  methods: {
-    select(event) {
-      this.isUpload = true;
-      this.uploader(event.target.files[0]).then((response) => {
-        this.$emit('upload', response);
-        this.isUpload = false;
-        // console.log(response);
-      });
+
+  computed: {
+    previewSrc() {
+      return this.selectedImage ?? this.preview;
     },
-    removeFile(e) {
-      if (this.preview) {
-        e.preventDefault();
-        this.$refs.fileupload.value = null;
+
+    // Текст от текущего состояния
+    stateText() {
+      return {
+        [States.EMPTY]: 'Загрузить изображение',
+        [States.LOADING]: 'Загрузка...',
+        [States.FILLED]: 'Удалить изображение',
+      }[this.state];
+    },
+  },
+
+  methods: {
+    handleFileSelect($event) {
+      const file = $event.target.files[0];
+      // Выводим текущий файл через URL.createObjectURL
+      this.selectedImage = URL.createObjectURL(file);
+      this.$emit('select', file);
+
+      // Если загрузчика нет - сразу считаем файл выбранным
+      if (!this.uploader) {
+        this.state = States.FILLED;
+        return;
+      }
+
+      this.state = States.LOADING;
+
+      return this.uploader(file)
+        .then((result) => {
+          this.state = States.FILLED;
+          this.$emit('upload', result);
+        })
+        .catch((error) => {
+          this.state = States.EMPTY;
+          // Не забываем сбросить файл в случае не успешной загрузки
+          // Иначе нельзя будет выбрать тот же файл
+          this.removeFile();
+          this.$emit('error', error);
+        })
+        .finally(() => {
+          this.selectedImage = null;
+        });
+    },
+
+    handleClick($event) {
+      if (this.state === States.LOADING) {
+        // Игнорируем клик во время загрузки
+        $event.preventDefault();
+      } else if (this.state === States.FILLED) {
+        $event.preventDefault();
+        this.removeFile();
+        this.state = States.EMPTY;
         this.$emit('remove');
       }
+      // Когда ничего не выбрано, клик обрабатывается по умолчанию, открывая диалог выбора файла
     },
-    // remove() {},
-    // upload() {},
+
+    removeFile() {
+      this.$refs.input.value = '';
+    },
   },
 };
 </script>
